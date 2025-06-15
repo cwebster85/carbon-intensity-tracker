@@ -1,3 +1,4 @@
+/* Root and Body */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -28,11 +29,87 @@ body {
   padding: 0;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Header */
+.header {
+  display: flex;
+  justify-content: center;
 }
 
+h1 {
+  font-size: 48px;
+}
+
+/* Insert row */
+.add-row-btn {
+  position: relative;
+  /* top: px; */
+  bottom: 18px;
+  left: 599px;
+}
+
+.add-button {
+  font-size: 20px;
+  padding: 4px 12px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #005bb5;
+}
+
+.modal {
+  background: white;
+  padding: 24px;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 8px;
+  position: relative;
+  text-transform: capitalize;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.input-group {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+}
+
+/* Error Handling */
+.error-message {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid transparent;

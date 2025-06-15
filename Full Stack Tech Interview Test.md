@@ -6,26 +6,33 @@
 
 You are required to build a full stack web application that allows users to 
 read DONE
-update
-delete
-store 
+update DONE
+delete DONE
+store TODO
 national carbon intensity values in front end application. 
 Use the provided mock data to build the application.
 
 ## 🧪 Data
-- The mock data in `carbon-intensity-data.csv` should be used to seed the database during initial setup. DONE
+- The mock data in `carbon-intensity-data.csv` should be used to seed the database during initial setup. TO DO WHEN SETTING UP HOST DB
 - Carbon intensity values are in grams of CO2 per kWh DONE
-- Fuel mix data is in percentage of total generation DONE (last row removed as this appears to be an accidental summation of the fuel percentage rows with no table header)
+- Fuel mix data is in percentage of total generation - DONE (last row removed as this appears to be an accidental summation of the fuel percentage rows with no table header)
 
 ## 🔧 Technology Stack & Project Requirements
 
 - Backend: Node.js with Express (or preferably C# ASP.NET) DONE
 - Frontend: React or SvelteKit DONE
 - Containerization: Docker STARTED
-- Database: PostgreSQL (or SQLite for simplicity) with ORM preferred STARTED
+- Database: PostgreSQL (or SQLite for simplicity) with ORM preferred
+ADDED SEQUELIZE
+BUILD IT UP WITH MODEL/MIGRATION/SEED AND
+DATA READING ONCE CONNECTED TO POSTGRES DB
+
 - Version Control: Git (GitHub/GitLab) DONE
-- Types: TypeScript where possible DONE IN FE
-- Testing: Unit and integration tests using Jest, Mocha/Chai (or equivalent in C#) DO THIS FOR GET REQUEST
+- Types: TypeScript where possible DOING
+- Testing: Unit and integration tests using Jest, Mocha/Chai (or equivalent in C#) 
+DONE FOR GET REQUEST (MOCK DATA)
+
+
 - A README must be included, detailing:
   - Setup instructions
   - Local development and Docker usage
@@ -45,10 +52,10 @@ DONE FOR GET REQUEST (200)
 - UI for interacting with the API
 - Ability to 
 view, DONE
-add, 
-edit, 
+add, DONE
+edit, TODO
 and 
-delete 
+delete DONE
 carbon intensity values
 
 - Back end response validation and error feedback
@@ -56,13 +63,23 @@ carbon intensity values
 ### 🧪 Test Coverage Expectations
 
 - Minimum 2–3 unit or integration tests
+1 FOR GET REQUEST AS STARTING POINT
+2 DONE ONE FOR POST REQUEST (ADD ROW)
 - Describe tools used and why
-- Consider edge cases and error flows
+USED JEST AS IT'S CLEAR AND READABLE, IN "PLAIN ENGLISH" I.E. "I WANT TO TEST THIS SPECIFIC ACTION (DOES THIS FETCH DATA? DOES IT RETURN A 200 STATUS CODE?)"
+- Consider edge cases and error flows 
+MAY WANT TO UNIT TEST ERROR FLOW
 
 ### ⚙️ DevOps & CI/CD
 
 - Docker setup should have all services containerized
 - Run linter and formatter in the CI/CD pipeline
+
+
+
+
+
+
 
 ### 📦 Optional/Nice-To-Have Tasks
 

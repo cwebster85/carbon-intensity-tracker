@@ -1,24 +1,26 @@
 import "./styles.css";
 
-const Table = ({ headers, data }) => {
-
+const Table = ({ headers, data, onDelete, onEdit }) => {
     return (
         <div>
             <table className="table">
                 <thead>
                     <tr className="headers">
-                        {headers.map(head => (
-                            <th>{head}</th>
+                        {headers.map((head, i) => (
+                            <th key={i}>{head}</th>
                         ))}
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {headers.map((head, colIndex) => {
-                                const value = row[head];
-                                const showUnit = ['intensity forecast', 'intensity actual'].includes(head.toLowerCase());
-                                const showPercentage = ['gas', 'coal', 'biomass', 'nuclear', 'hydro', 'imports', 'wind', 'solar', 'other', 'misc']
+                                const rawValue = row[head];
+                                const value = typeof rawValue === 'object' && rawValue !== null
+                                    ? JSON.stringify(rawValue)
+                                    : rawValue; const showUnit = ['intensity forecast', 'intensity actual'].includes(head.toLowerCase());
+                                const showPercentage = ['gas', 'coal', 'biomass', 'nuclear', 'hydro', 'imports', 'wind', 'solar', 'other'];
 
                                 return (
                                     <td key={`${rowIndex}-${colIndex}`}>
@@ -36,6 +38,10 @@ const Table = ({ headers, data }) => {
                                     </td>
                                 );
                             })}
+                            <td>
+                                <button onClick={() => onEdit(row)}>✏️ Edit</button>
+                                <button onClick={() => onDelete(row)}>🗑️ Delete</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

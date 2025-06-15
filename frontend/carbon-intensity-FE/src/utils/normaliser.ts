@@ -25,6 +25,8 @@ export function normaliser(
             normalisedRow[key.replace(/_/g, ' ')] = value;
         }
 
+        normalisedRow._original = row;
+
         return normalisedRow;
     });
 
