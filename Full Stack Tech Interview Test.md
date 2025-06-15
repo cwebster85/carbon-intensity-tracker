@@ -4,39 +4,53 @@
 
 **Please read the instructions carefully.**
 
-You are required to build a full stack web application that allows users to read, update, delete and store national carbon intensity values in front end application. Use the provided mock data to build the application.
+You are required to build a full stack web application that allows users to 
+read DONE
+update
+delete
+store 
+national carbon intensity values in front end application. 
+Use the provided mock data to build the application.
 
 ## 🧪 Data
-- The mock data in `carbon-intensity-data.csv` should be used to seed the database during initial setup.
-- Carbon intensity values are in grams of CO2 per kWh
-- Fuel mix data is in percentage of total generation
+- The mock data in `carbon-intensity-data.csv` should be used to seed the database during initial setup. DONE
+- Carbon intensity values are in grams of CO2 per kWh DONE
+- Fuel mix data is in percentage of total generation DONE (last row removed as this appears to be an accidental summation of the fuel percentage rows with no table header)
 
 ## 🔧 Technology Stack & Project Requirements
 
-- Backend: Node.js with Express (or preferably C# ASP.NET)
-- Frontend: React or SvelteKit
-- Containerization: Docker
-- Database: PostgreSQL (or SQLite for simplicity) with ORM preferred
-- Version Control: Git (GitHub/GitLab)
-- Types: TypeScript where possible
-- Testing: Unit and integration tests using Jest, Mocha/Chai (or equivalent in C#)
+- Backend: Node.js with Express (or preferably C# ASP.NET) DONE
+- Frontend: React or SvelteKit DONE
+- Containerization: Docker STARTED
+- Database: PostgreSQL (or SQLite for simplicity) with ORM preferred STARTED
+- Version Control: Git (GitHub/GitLab) DONE
+- Types: TypeScript where possible DONE IN FE
+- Testing: Unit and integration tests using Jest, Mocha/Chai (or equivalent in C#) DO THIS FOR GET REQUEST
 - A README must be included, detailing:
   - Setup instructions
   - Local development and Docker usage
 
 ### 💾 Backend
 
-- API server to interact with front end
-- Persistent storage in database
-- Error handling and input validation
-- Ensure appropriate HTTP status codes are returned
-- Modular code structure with separation of concerns
+- API server to interact with front end DONE
+- Persistent storage in database TODO
+- Error handling and input validation TODO
+- Ensure appropriate HTTP status codes are returned 
+DONE FOR GET REQUEST (200)
+- Modular code structure with separation of concerns DOING
 
 ### 🌐 Frontend
 
-- Fetch data from the backend API
+- Fetch data from the backend API DONE
 - UI for interacting with the API
-- Ability to view, add, edit, and delete carbon intensity values
+- Ability to 
+view, DONE
+add, 
+edit, 
+and 
+delete 
+carbon intensity values
+
 - Back end response validation and error feedback
 
 ### 🧪 Test Coverage Expectations
@@ -70,7 +84,7 @@ You can choose to implement any of these to demonstrate advanced skill.
 
 ### 🔌 **Carbon Intensity API Integration**
 
-Website: https://carbonintensity.org.uk/ //CAN USE CSS FE FROM HERE?
+Website: https://carbonintensity.org.uk/ 
 
 Required Endpoints:
 
@@ -80,7 +94,7 @@ Required Endpoints:
 
 Task Requirements:
 
-- Fetch current carbon intensity values
+- Fetch current carbon intensity values DOING
 - Fetch current fuel mix (generation) values
 - On new data event merge and store carbon intensity + fuel mix data
 - Display historical data (default: 12 hours, configurable date range)

@@ -614,4 +614,6 @@ const mockData =
         }
     ]
 
-module.exports = mockData;
+const cleanedData = mockData.map(({ misc, ...rest }) => rest);
+
+module.exports = cleanedData;

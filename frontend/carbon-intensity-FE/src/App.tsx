@@ -1,33 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import axios from 'axios';
+import Table from './components/tables/table';
 import './App.css'
+import { normaliser } from './utils/normaliser';
+
+type CarbonData = {
+  from: string;
+  to: string;
+  intensity_forecast: number;
+  intensity_actual: number;
+  index: string;
+  gas: number;
+  coal: number;
+  biomass: number;
+  nuclear: number;
+  hydro: number;
+  imports: number;
+  wind: number;
+  solar: number;
+  other: number;
+  misc: number;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState<CarbonData[]>([])
+  const [headers, setHeaders] = useState<string[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  const url = 'http://localhost:3001/api/intensity'
+
+  const fetchInfo = () => {
+    return axios.get(url)
+      .then((response) => {
+        const rawData = response.data
+        if (rawData.length > 0) {
+          const rawHeaders = Object.keys(rawData[0])
+          const [normHeaders, normData] = normaliser(rawHeaders, rawData)
+          setHeaders(normHeaders)
+          setData(normData)
+        }
+      })
+  }
+
+  useEffect(() => {
+    fetchInfo();
+  }, [])
+
+  // console.log(data);
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Carbon Intensity</h1>
+        <Table headers={headers} data={data} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }

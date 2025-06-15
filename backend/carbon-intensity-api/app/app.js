@@ -14,6 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// cors config
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 
 // Routes
 app.get('/test', (req, res) => {
