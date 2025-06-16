@@ -40,7 +40,7 @@ jobs:
       - name: Format check
         run: |
           cd backend/carbon-intensity-api/app
-          npx prettier --check .
+          npx prettier --check --ignore-path .gitignore --ignore-pattern "coverage/**" .
           cd ../../..
           cd frontend/carbon-intensity-FE
-          npx prettier --check .
+          npx prettier --check --ignore-path .gitignore .
