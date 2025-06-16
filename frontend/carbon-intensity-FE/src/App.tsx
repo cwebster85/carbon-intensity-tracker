@@ -183,12 +183,10 @@ function App() {
   };
 
   const handleDelete = async (row: RowWithOriginal) => {
-    const original = row._original;
-
     try {
       await axios.post(`${API_URL}/api/delete/intensity`, {
-        from: original?.from || row.from,
-        to: original?.to || row.to,
+        from: row._original?.from || row.from,
+        to: row._original?.to || row.to,
       });
       fetchInfo();
     } catch (err) {
