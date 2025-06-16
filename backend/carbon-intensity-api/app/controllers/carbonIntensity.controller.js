@@ -1,8 +1,13 @@
-const { getAllCarbonData, insertCarbonData, removeCarbonData, updateCarbonData } = require('../services/carbonIntensity.service');
+import {
+  getAllCarbonData,
+  insertCarbonData,
+  removeCarbonData,
+  updateCarbonData,
+} from '../services/carbonIntensity.service.js';
 
-function getCarbonData(req, res) {
+async function getCarbonData(req, res) {
   try {
-    const data = getAllCarbonData();
+    const data = await getAllCarbonData();
 
     if (!data || data.length === 0) {
       return res.status(404).json({ error: 'No data found' });
@@ -15,11 +20,23 @@ function getCarbonData(req, res) {
   }
 }
 
-function addCarbonData(req, res) {
+async function addCarbonData(req, res) {
   try {
     const requiredFields = [
-      'from', 'to', 'intensity_forecast', 'intensity_actual', 'index',
-      'gas', 'coal', 'biomass', 'nuclear', 'hydro', 'imports', 'wind', 'solar', 'other'
+      'from',
+      'to',
+      'intensity_forecast',
+      'intensity_actual',
+      'index',
+      'gas',
+      'coal',
+      'biomass',
+      'nuclear',
+      'hydro',
+      'imports',
+      'wind',
+      'solar',
+      'other',
     ];
     for (const field of requiredFields) {
       if (req.body[field] === undefined || req.body[field] === '') {
@@ -27,7 +44,7 @@ function addCarbonData(req, res) {
       }
     }
 
-    const newEntry = insertCarbonData(req.body);
+    const newEntry = await insertCarbonData(req.body);
     res.status(201).json(newEntry);
   } catch (error) {
     console.error('Error adding carbon data:', error);
@@ -35,9 +52,9 @@ function addCarbonData(req, res) {
   }
 }
 
-function editCarbonData(req, res) {
+async function editCarbonData(req, res) {
   try {
-    const updated = updateCarbonData(req.body);
+    const updated = await updateCarbonData(req.body);
 
     if (updated) {
       res.status(200).json(updated);
@@ -50,9 +67,9 @@ function editCarbonData(req, res) {
   }
 }
 
-function deleteCarbonData(req, res) {
+async function deleteCarbonData(req, res) {
   try {
-    const deleted = removeCarbonData(req.body);
+    const deleted = await removeCarbonData(req.body);
 
     if (deleted) {
       res.status(200).json({ success: true, deleted });
@@ -65,9 +82,4 @@ function deleteCarbonData(req, res) {
   }
 }
 
-module.exports = {
-  getCarbonData,
-  addCarbonData,
-  editCarbonData,
-  deleteCarbonData
-};
+export { getCarbonData, addCarbonData, editCarbonData, deleteCarbonData };

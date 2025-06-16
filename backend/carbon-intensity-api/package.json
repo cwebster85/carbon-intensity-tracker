@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/carbon-intensity-api/app/bin/www",
+    "build": "npm run build --prefix app",
+    "dev": "ts-node-dev --respawn app/bin/www.js",
+    "seed:prod": "npm run seed:prod --prefix app",
+    "seed:docker": "docker-compose run --rm app npm run seed:prod",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
   }
 }

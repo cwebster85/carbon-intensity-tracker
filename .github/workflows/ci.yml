@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install backend dependencies
+        run: |
+          cd backend/carbon-intensity-api/app
+          npm install
+          
+      - name: Install frontend dependencies
+        run: |
+          cd frontend/carbon-intensity-FE
+          npm install
+          
+      - name: Lint backend
+        run: |
+          cd backend/carbon-intensity-api/app
+          npx eslint .
+          
+      - name: Lint frontend
+        run: |
+          cd frontend/carbon-intensity-FE
+          npx eslint .
+          
+      - name: Format check
+        run: |
+          cd backend/carbon-intensity-api/app
+          npx prettier --check .
+          cd ../../..
+          cd frontend/carbon-intensity-FE
+          npx prettier --check .

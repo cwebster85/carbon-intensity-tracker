@@ -7,26 +7,27 @@ import { normaliser } from './utils/normaliser';
 
 Modal.setAppElement('#root');
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+console.log('Using API URL:', API_URL);
+
 const defaultRow = {
   from: '2025-01-01T00:00',
   to: '2025-01-01T00:30',
-  intensity_forecast: "250",
-  intensity_actual: "245",
-  index: "moderate",
-  gas: "30.0",
-  coal: "10.0",
-  biomass: "5.0",
-  nuclear: "15.0",
-  hydro: "2.0",
-  imports: "8.0",
-  wind: "10.0",
-  solar: "12.0",
-  other: "3.0",
+  intensity_forecast: '250',
+  intensity_actual: '245',
+  index: 'moderate',
+  gas: '30.0',
+  coal: '10.0',
+  biomass: '5.0',
+  nuclear: '15.0',
+  hydro: '2.0',
+  imports: '8.0',
+  wind: '10.0',
+  solar: '12.0',
+  other: '3.0',
 };
 
-const emptyRow = Object.fromEntries(
-  Object.keys(defaultRow).map((key) => [key, ""])
-);
+const emptyRow = Object.fromEntries(Object.keys(defaultRow).map((key) => [key, '']));
 
 type CarbonData = {
   from: string;
@@ -45,6 +46,10 @@ type CarbonData = {
   other: number;
 };
 
+interface RowWithOriginal extends CarbonData {
+  _original?: CarbonData;
+}
+
 function App() {
   const [data, setData] = useState<CarbonData[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
@@ -52,44 +57,46 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
-  const [rowToEdit, setRowToEdit] = useState<(CarbonData & { _original?: CarbonData }) | null>(null);
+  const [rowToEdit, setRowToEdit] = useState<RowWithOriginal | null>(null);
 
   const fetchInfo = () => {
-    axios
-      .get(`http://localhost:3001/api/get/intensity?ts=${Date.now()}`)
-      .then((response) => {
-        const rawData = response.data;
+    axios.get(`${API_URL}/api/get/intensity?ts=${Date.now()}`).then((response) => {
+      const rawData = response.data;
 
-        if (rawData.length > 0) {
-          const cleanedData = rawData.map(({ _original, ...rest }) => rest);
-          const rawHeaders = Object.keys(cleanedData[0]);
+      if (rawData.length > 0) {
+        const cleanedData = rawData.map(({ _original, ...rest }: RowWithOriginal) => rest);
+        const rawHeaders = Object.keys(cleanedData[0]);
 
-          const [normHeaders, normData] = normaliser(rawHeaders, cleanedData);
+        const [normHeaders, normData] = normaliser(rawHeaders, cleanedData);
+        const filteredHeaders = Array.from(new Set(normHeaders));
+        const finalHeaders = filteredHeaders.filter(
+          (h) =>
+            ![
+              'intensity forecast',
+              'intensity actual',
+              'Intensity Forecast',
+              'Intensity Actual',
+            ].includes(h.toLowerCase()),
+        );
 
-          // Remove duplicate headers (especially from normaliser bug)
-          const filteredHeaders = Array.from(new Set(normHeaders));
+        const orderedHeaders = [
+          'from',
+          'to',
+          'intensity forecast',
+          'intensity actual',
+          ...finalHeaders.filter(
+            (h) =>
+              !['from', 'to', 'intensity forecast', 'intensity actual'].includes(h.toLowerCase()),
+          ),
+        ];
 
-          // Remove any incorrectly injected headers
-          const finalHeaders = filteredHeaders.filter(h =>
-            !['intensity forecast', 'intensity actual', 'Intensity Forecast', 'Intensity Actual']
-              .includes(h.toLowerCase())
-          );
-
-          // Manually insert the correct version of these headers in the right place
-          const orderedHeaders = [
-            'from', 'to', 'intensity forecast', 'intensity actual',
-            ...finalHeaders.filter(h =>
-              !['from', 'to', 'intensity forecast', 'intensity actual'].includes(h.toLowerCase())
-            )
-          ];
-
-          const sortedData = [...normData].sort(
-            (a, b) => new Date(b.from).getTime() - new Date(a.from).getTime()
-          );
-          setHeaders(orderedHeaders);
-          setData(sortedData);
-        }
-      });
+        const sortedData = [...normData].sort(
+          (a, b) => new Date(b.from).getTime() - new Date(a.from).getTime(),
+        );
+        setHeaders(orderedHeaders);
+        setData(sortedData);
+      }
+    });
   };
 
   useEffect(() => {
@@ -135,37 +142,39 @@ function App() {
     const match = input.match(/^(\d{2})\/(\d{2})\/(\d{4}),\s*(\d{2}):(\d{2})(?::(\d{2}))?$/);
     if (!match) return '';
 
-    const [_, dd, mm, yyyy, hh, min] = match;
+    const [, dd, mm, yyyy, hh, min] = match;
     return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
   };
 
-  const handleEditClick = (row: any) => {
-    const keyMap = {
+  const handleEditClick = (row: RowWithOriginal) => {
+    const keyMap: Record<string, string> = {
       'intensity forecast': 'intensity_forecast',
       'intensity actual': 'intensity_actual',
-      'from': 'from',
-      'to': 'to',
-      'index': 'index',
-      'gas': 'gas',
-      'coal': 'coal',
-      'biomass': 'biomass',
-      'nuclear': 'nuclear',
-      'hydro': 'hydro',
-      'imports': 'imports',
-      'wind': 'wind',
-      'solar': 'solar',
-      'other': 'other'
+      from: 'from',
+      to: 'to',
+      index: 'index',
+      gas: 'gas',
+      coal: 'coal',
+      biomass: 'biomass',
+      nuclear: 'nuclear',
+      hydro: 'hydro',
+      imports: 'imports',
+      wind: 'wind',
+      solar: 'solar',
+      other: 'other',
     };
 
     const prefill = Object.fromEntries(
-      Object.entries(row).map(([key, val]) => {
-        const internalKey = keyMap[key];
-        if (!internalKey) return [];
-        if (internalKey === 'from' || internalKey === 'to') {
-          return [internalKey, toDateTimeLocal(val)];
-        }
-        return [internalKey, val !== undefined && val !== null ? String(val) : ''];
-      }).filter(([k, v]) => k)
+      Object.entries(row)
+        .map(([key, val]) => {
+          const internalKey = keyMap[key];
+          if (!internalKey) return [];
+          if (internalKey === 'from' || internalKey === 'to') {
+            return [internalKey, toDateTimeLocal(String(val))];
+          }
+          return [internalKey, val !== undefined && val !== null ? String(val) : ''];
+        })
+        .filter((entry) => entry.length > 0),
     );
 
     setNewRow(prefill);
@@ -173,17 +182,17 @@ function App() {
     setModalOpen(true);
   };
 
-  const handleDelete = async (row: any) => {
+  const handleDelete = async (row: RowWithOriginal) => {
     const original = row._original;
 
     try {
-      await axios.post("http://localhost:3001/api/delete/intensity", {
-        from: original.from,
-        to: original.to,
+      await axios.post(`${API_URL}/api/delete/intensity`, {
+        from: original?.from || row.from,
+        to: original?.to || row.to,
       });
       fetchInfo();
     } catch (err) {
-      console.error("Error deleting row", err);
+      console.error('Error deleting row', err);
     }
   };
 
@@ -198,11 +207,18 @@ function App() {
     if (fromDate >= toDate) errors.to = '"To" must be later than "From"';
 
     const percentKeys = [
-      'gas', 'coal', 'biomass', 'nuclear', 'hydro',
-      'imports', 'wind', 'solar', 'other'
+      'gas',
+      'coal',
+      'biomass',
+      'nuclear',
+      'hydro',
+      'imports',
+      'wind',
+      'solar',
+      'other',
     ];
 
-    percentKeys.forEach(key => {
+    percentKeys.forEach((key) => {
       const value = parseFloat(newRow[key]);
       if (isNaN(value)) errors[key] = 'Must be a number';
       else if (value < 0 || value > 100) errors[key] = 'Value must be between 0 and 100';
@@ -216,25 +232,23 @@ function App() {
     setFormErrors({});
 
     try {
-      const url = rowToEdit
-        ? 'http://localhost:3001/api/edit/intensity'
-        : 'http://localhost:3001/api/add/intensity';
+      const url = rowToEdit ? `${API_URL}/api/edit/intensity` : `${API_URL}/api/add/intensity`;
 
       const method = rowToEdit ? axios.put : axios.post;
 
       const payload = rowToEdit
         ? {
-          originalFrom: rowToEdit._original?.from || rowToEdit.from,
-          originalTo: rowToEdit._original?.to || rowToEdit.to,
-          ...newRow,
-          from: new Date(newRow.from).toISOString(),
-          to: new Date(newRow.to).toISOString(),
-        }
+            originalFrom: rowToEdit._original?.from || rowToEdit.from,
+            originalTo: rowToEdit._original?.to || rowToEdit.to,
+            ...newRow,
+            from: new Date(newRow.from).toISOString(),
+            to: new Date(newRow.to).toISOString(),
+          }
         : {
-          ...newRow,
-          from: new Date(newRow.from).toISOString(),
-          to: new Date(newRow.to).toISOString(),
-        };
+            ...newRow,
+            from: new Date(newRow.from).toISOString(),
+            to: new Date(newRow.to).toISOString(),
+          };
 
       const response = await method(url, payload);
 
@@ -253,15 +267,20 @@ function App() {
 
   return (
     <div>
-      <div className='header'>
+      <div className="header">
         <h1>National Carbon Intensity</h1>
       </div>
-      <div className='add-row-btn'>
-        <button onClick={() => {
-          setModalOpen(true);
-          setNewRow(defaultRow);
-          setRowToEdit(null);
-        }} className="add-button">Add New Row＋</button>
+      <div className="add-row-btn">
+        <button
+          onClick={() => {
+            setModalOpen(true);
+            setNewRow(defaultRow);
+            setRowToEdit(null);
+          }}
+          className="add-button"
+        >
+          Add New Row＋
+        </button>
       </div>
       <Table headers={headers} data={data} onDelete={handleDelete} onEdit={handleEditClick} />
       <Modal
@@ -293,8 +312,24 @@ function App() {
                   onChange={handleChange}
                   required
                   step="any"
-                  min={key !== 'from' && key !== 'to' && key !== 'intensity_forecast' && key !== 'intensity_actual' && key !== 'index' ? 0 : undefined}
-                  max={key !== 'from' && key !== 'to' && key !== 'intensity_forecast' && key !== 'intensity_actual' && key !== 'index' ? 100 : undefined}
+                  min={
+                    key !== 'from' &&
+                    key !== 'to' &&
+                    key !== 'intensity_forecast' &&
+                    key !== 'intensity_actual' &&
+                    key !== 'index'
+                      ? 0
+                      : undefined
+                  }
+                  max={
+                    key !== 'from' &&
+                    key !== 'to' &&
+                    key !== 'intensity_forecast' &&
+                    key !== 'intensity_actual' &&
+                    key !== 'index'
+                      ? 100
+                      : undefined
+                  }
                 />
               )}
               {formErrors[key] && touchedFields[key] && (
@@ -305,10 +340,7 @@ function App() {
 
           <div className="modal-actions">
             <button type="submit">{rowToEdit ? 'Save' : 'Add'}</button>
-            <button
-              type="button"
-              onClick={() => setModalOpen(false)}
-            >
+            <button type="button" onClick={() => setModalOpen(false)}>
               Cancel
             </button>
             <button

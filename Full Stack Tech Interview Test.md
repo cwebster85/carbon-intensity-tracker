@@ -21,16 +21,18 @@ Use the provided mock data to build the application.
 
 - Backend: Node.js with Express (or preferably C# ASP.NET) DONE
 - Frontend: React or SvelteKit DONE
-- Containerization: Docker STARTED
+- Containerization: Docker DONE
 - Database: PostgreSQL (or SQLite for simplicity) with ORM preferred
 ADDED SEQUELIZE
 BUILD IT UP WITH MODEL/MIGRATION/SEED AND
 DATA READING ONCE CONNECTED TO POSTGRES DB
 
+NOW TO ADD DB..NEED TO ENSURE IT WORKS IN DOCKER CONTAINER TOO
+
 - Version Control: Git (GitHub/GitLab) DONE
-- Types: TypeScript where possible DOING
+- Types: TypeScript where possible DONE
 - Testing: Unit and integration tests using Jest, Mocha/Chai (or equivalent in C#) 
-DONE FOR GET REQUEST (MOCK DATA)
+DONE FOR GET AND POST REQUEST
 
 
 - A README must be included, detailing:
@@ -41,10 +43,10 @@ DONE FOR GET REQUEST (MOCK DATA)
 
 - API server to interact with front end DONE
 - Persistent storage in database TODO
-- Error handling and input validation TODO
+- Error handling and input validation DONE
 - Ensure appropriate HTTP status codes are returned 
-DONE FOR GET REQUEST (200)
-- Modular code structure with separation of concerns DOING
+DONE
+- Modular code structure with separation of concerns DONE
 
 ### 🌐 Frontend
 
@@ -53,7 +55,7 @@ DONE FOR GET REQUEST (200)
 - Ability to 
 view, DONE
 add, DONE
-edit, TODO
+edit, DONE
 and 
 delete DONE
 carbon intensity values
@@ -63,23 +65,14 @@ carbon intensity values
 ### 🧪 Test Coverage Expectations
 
 - Minimum 2–3 unit or integration tests
-1 FOR GET REQUEST AS STARTING POINT
-2 DONE ONE FOR POST REQUEST (ADD ROW)
 - Describe tools used and why
-USED JEST AS IT'S CLEAR AND READABLE, IN "PLAIN ENGLISH" I.E. "I WANT TO TEST THIS SPECIFIC ACTION (DOES THIS FETCH DATA? DOES IT RETURN A 200 STATUS CODE?)"
 - Consider edge cases and error flows 
-MAY WANT TO UNIT TEST ERROR FLOW
+
 
 ### ⚙️ DevOps & CI/CD
 
 - Docker setup should have all services containerized
 - Run linter and formatter in the CI/CD pipeline
-
-
-
-
-
-
 
 ### 📦 Optional/Nice-To-Have Tasks
 
@@ -111,7 +104,7 @@ Required Endpoints:
 
 Task Requirements:
 
-- Fetch current carbon intensity values DOING
+- Fetch current carbon intensity values 
 - Fetch current fuel mix (generation) values
 - On new data event merge and store carbon intensity + fuel mix data
 - Display historical data (default: 12 hours, configurable date range)

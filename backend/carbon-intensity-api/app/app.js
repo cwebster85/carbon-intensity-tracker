@@ -1,44 +1,83 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import createError from 'http-errors';
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import cors from 'cors';
 
-const carbonIntensityRouter = require('./routes/carbonIntensity.routes');
+import carbonIntensityRouter from './routes/carbonIntensity.routes.js';
+import { sequelize, CarbonData } from './models/db.js';
+import mockData from './mockData.js';
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// cors config
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:5173'
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://frontend:5173'],
+  }),
+);
 
-// Routes
+// Database initialization
+async function initializeDatabase() {
+  try {
+    // Connect to database
+    await sequelize.authenticate();
+    console.log('Database connection established successfully');
+
+    // Create tables without dropping existing ones
+    await sequelize.sync({ force: false });
+    console.log('Database tables synchronized');
+
+    // Check if data exists
+    const count = await CarbonData.count();
+    console.log(`Database contains ${count} records`);
+
+    // Seed only if empty
+    if (count === 0) {
+      console.log('Seeding database with initial data');
+      await CarbonData.bulkCreate(mockData);
+      console.log('Database seeded successfully');
+    }
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    console.log('Using fallback in-memory data storage');
+  }
+}
+
+// Initialize database before starting the server
+initializeDatabase();
+
 app.get('/test', (req, res) => {
   res.send('Hello World!');
 });
 
 app.use('/api', carbonIntensityRouter);
 
-// Catch 404
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// Error handler
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    error: err.message,
+  });
 });
 
-module.exports = app;
+export default app;
