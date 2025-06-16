@@ -41,10 +41,6 @@ async function initializeDatabase() {
     await sequelize.sync({ force: false });
     console.log('Database tables synchronized');
 
-    // Check if data exists
-    const count = await CarbonData.count();
-    console.log(`Database contains ${count} records`);
-
     // Seed only if empty
     if (count === 0) {
       console.log('Seeding database with initial data');
