@@ -65,7 +65,7 @@ function App() {
 
       if (rawData.length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const cleanedData = rawData.map(({ _original, ...rest }: RowWithOriginal) => rest);
+        const cleanedData = rawData.map(({ _original, ...rest }: RowWithOriginal) => rest);
         const rawHeaders = Object.keys(cleanedData[0]);
 
         const [normHeaders, normData] = normaliser(rawHeaders, cleanedData);
