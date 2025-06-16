@@ -42,6 +42,7 @@ async function initializeDatabase() {
     console.log('Database tables synchronized');
 
     // Seed only if empty
+    const count = await CarbonData.count();
     if (count === 0) {
       console.log('Seeding database with initial data');
       await CarbonData.bulkCreate(mockData);
@@ -66,7 +67,7 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
