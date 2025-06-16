@@ -30,12 +30,12 @@ jobs:
       - name: Lint backend
         run: |
           cd backend/carbon-intensity-api/app
-          npx eslint .
+          npx eslint . --fix
           
       - name: Lint frontend
         run: |
           cd frontend/carbon-intensity-FE
-          npx eslint .
+          npx eslint . --fix
           
       - name: Format check
         run: |
